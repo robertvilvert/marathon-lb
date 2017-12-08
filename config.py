@@ -66,6 +66,9 @@ AES256-SHA256:!aNULL:!MD5:!DSS
 defaults
   load-server-state-from-file global
   log               global
+  mode    http
+  option  httplog
+  option  dontlognull
   retries                   3
   backlog               10000
   maxconn               10000
