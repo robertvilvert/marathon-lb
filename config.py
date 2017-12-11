@@ -68,6 +68,10 @@ defaults
   log               global
   mode    http
   option  httplog
+   # option forwardfor
+   # http-request set-header X-Forwarded-Port %[dst_port]
+   # http-request add-header X-Forwarded-Proto https if { ssl_fc }
+
   option  dontlognull
   retries                   3
   backlog               10000
@@ -137,6 +141,11 @@ all virtual hosts as defined by the `HAPROXY_{n}_VHOST` label.
 frontend marathon_http_appid_in
   bind *:9091
   mode http
+  option httplog
+  log global
+  capture request header Host len 15
+  capture request header X-Forwarded-For len 15
+  capture request header Referer len 15
 ''',
                            overridable=False,
                            description='''\
@@ -156,6 +165,11 @@ supported. Only the first HTTP port is available via this frontend.
 frontend marathon_https_in
   bind *:443 ssl {sslCerts}
   mode http
+  option httplog
+  log global
+  capture request header Host len 15
+  capture request header X-Forwarded-For len 15
+  capture request header Referer len 15
 ''',
                            overridable=False,
                            description='''\
