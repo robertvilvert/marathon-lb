@@ -143,6 +143,9 @@ frontend marathon_http_appid_in
   mode http
   option httplog
   log global
+  capture request header Referrer len 64
+  capture request header Content-Length len 10
+  capture request header User-Agent len 64
   capture request header Host len 15
   capture request header X-Forwarded-For len 15
   capture request header Referer len 15
@@ -167,6 +170,9 @@ frontend marathon_https_in
   mode http
   option httplog
   log global
+  capture request header Referrer len 64
+  capture request header Content-Length len 10
+  capture request header User-Agent len 64
   capture request header Host len 15
   capture request header X-Forwarded-For len 15
   capture request header Referer len 15
