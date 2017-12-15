@@ -90,6 +90,9 @@ listen stats
   balance
   mode http
   stats enable
+  option http-buffer-request
+  declare capture request len 40000
+  http-request capture req.body id 0
   monitor-uri /_haproxy_health_check
   acl getpid path /_haproxy_getpids
   http-request use-service lua.getpids if getpid
@@ -128,6 +131,27 @@ The userlist for basic HTTP auth.
 frontend marathon_http_in
   bind *:80
   mode http
+  option httplog
+  option http-buffer-request
+  declare capture request len 40000
+  http-request capture req.body id 0
+  log-format "body=%[capture.req.hdr(0)] request=%r \
+       ip_and_port=%ci:%cp time=[%tr] frontend=%ft backend_name=%b \
+       server_name=%s total_time_connection_tcp=%Tc Tr=%Tr Ta=%Ta \
+       status_code=%ST bytes_read=%B captured_request_cookie=%CC \
+       captured_response_cookie=%CS termination_state_cookie_status=%tsc \
+       actconn=%ac frontend_concurrent_connections=%fc \
+       backend_concurrent_connections=%bc connections_active=%sc \
+       retries=%rc srv_queue=%sq backend_queue=%bq \
+       captured_request_headers=%hr \ captured_response_headers=%hs"
+  log global
+  capture request header Referrer len 128
+  capture request header Content-Length len 100
+  capture request header User-Agent len 100
+  capture request header Host len 100
+  capture request header X-Forwarded-For len 100
+  capture request header Referer len 200
+  capture request header Content-Type len 100
 ''',
                            overridable=False,
                            description='''\
@@ -142,13 +166,26 @@ frontend marathon_http_appid_in
   bind *:9091
   mode http
   option httplog
+  option http-buffer-request
+  declare capture request len 40000
+  http-request capture req.body id 0
+  log-format "body=%[capture.req.hdr(0)] request=%r \
+       ip_and_port=%ci:%cp time=[%tr] frontend=%ft backend_name=%b \
+       server_name=%s total_time_connection_tcp=%Tc Tr=%Tr Ta=%Ta \
+       status_code=%ST bytes_read=%B captured_request_cookie=%CC \
+       captured_response_cookie=%CS termination_state_cookie_status=%tsc \
+       actconn=%ac frontend_concurrent_connections=%fc \
+       backend_concurrent_connections=%bc connections_active=%sc \
+       retries=%rc srv_queue=%sq backend_queue=%bq \
+       captured_request_headers=%hr \ captured_response_headers=%hs"
   log global
   capture request header Referrer len 128
-  capture request header Content-Length len 64
-  capture request header User-Agent len 64
-  capture request header Host len 32
-  capture request header X-Forwarded-For len 32
-  capture request header Referer len 64
+  capture request header Content-Length len 100
+  capture request header User-Agent len 100
+  capture request header Host len 100
+  capture request header X-Forwarded-For len 100
+  capture request header Referer len 200
+  capture request header Content-Type len 100
 ''',
                            overridable=False,
                            description='''\
@@ -169,13 +206,23 @@ frontend marathon_https_in
   bind *:443 ssl {sslCerts}
   mode http
   option httplog
+  log-format "body=%[capture.req.hdr(0)] request=%r \
+       ip_and_port=%ci:%cp time=[%tr] frontend=%ft backend_name=%b \
+       server_name=%s total_time_connection_tcp=%Tc Tr=%Tr Ta=%Ta \
+       status_code=%ST bytes_read=%B captured_request_cookie=%CC \
+       captured_response_cookie=%CS termination_state_cookie_status=%tsc \
+       actconn=%ac frontend_concurrent_connections=%fc \
+       backend_concurrent_connections=%bc connections_active=%sc \
+       retries=%rc srv_queue=%sq backend_queue=%bq \
+       captured_request_headers=%hr \ captured_response_headers=%hs"
   log global
   capture request header Referrer len 128
-  capture request header Content-Length len 64
-  capture request header User-Agent len 64
-  capture request header Host len 32
-  capture request header X-Forwarded-For len 32
-  capture request header Referer len 64
+  capture request header Content-Length len 100
+  capture request header User-Agent len 100
+  capture request header Host len 100
+  capture request header X-Forwarded-For len 100
+  capture request header Referer len 200
+  capture request header Content-Type len 100
 ''',
                            overridable=False,
                            description='''\
